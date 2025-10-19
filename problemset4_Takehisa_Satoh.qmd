@@ -1,0 +1,80 @@
+---
+title: "Problem set 4"
+author: "Takehisa Satoh"
+format: pdf
+editor: visual
+---
+
+# problem 1
+```{r}
+install.packages("nzelect")
+install.packages("tidyverse")
+
+```
+
+# 1-a
+```{r}
+library(tidyverse)
+library(nzelect)
+
+glimpse(nzge)
+
+vote_summary<- nzge %>%
+                group_by(election_year,voting_type)%>%
+                  summarise(total_votes=sum(votes,na.rm=TRUE))%>%
+                  arrange(desc(total_votes))
+
+vote_summary
+
+```
+
+# 1-b
+```{r}
+candidate_2014<-nzge %>%
+                  filter(election_year==2014,voting_type=="Candidate")%>%
+                  group_by(party)%>%
+                  summarize(vote = sum(votes,na.rm=TRUE))%>%
+                  mutate(percent=100*vote/sum(vote))%>%
+                  arrange(desc(percent))
+                  
+candidate_2014
+
+
+```
+
+# 1-c
+```{r}
+winners<-nzge%>%
+          group_by(election_year,voting_type,party)%>%
+          summarise(total_vote=sum(votes),na.rm=TRUE)%>%
+          slice_max(total_vote,n=1,with_ties=FALSE)%>%
+          select(election_year,voting_type,party,total_vote)
+
+winner_table<- winners %>%
+                pivot_wider(names_from = voting_type,values_from=c(party,total_vote),names_sep="_")%>%
+                arrange(election_year)
+  
+
+winner_table
+```
+
+## Quarto
+
+Quarto enables you to weave together content and executable code into a finished document. To learn more about Quarto see <https://quarto.org>.
+
+## Running Code
+
+When you click the **Render** button a document will be generated that includes both content and the output of embedded code. You can embed code like this:
+
+```{r}
+1 + 1
+```
+
+You can add options to executable code like this
+
+```{r}
+#| echo: false
+2 * 2
+```
+
+The `echo: false` option disables the printing of code (only output is displayed).
