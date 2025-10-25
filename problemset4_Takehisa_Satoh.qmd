@@ -5,6 +5,8 @@ format: pdf
 editor: visual
 ---
 
+#Gitrepository:https://github.com/takehsia/Stats506_problemset_4.git
+
 # problem 1
 ```{r}
 install.packages("nzelect")
@@ -47,8 +49,7 @@ candidate_2014
 winners<-nzge%>%
           group_by(election_year,voting_type,party)%>%
           summarise(total_vote=sum(votes),na.rm=TRUE)%>%
-          slice_max(total_vote,n=1,with_ties=FALSE)%>%
-          select(election_year,voting_type,party,total_vote)
+          slice_max(total_vote,n=1,with_ties=FALSE)
 
 winner_table<- winners %>%
                 pivot_wider(names_from = voting_type,values_from=c(party,total_vote),names_sep="_")%>%
@@ -57,6 +58,48 @@ winner_table<- winners %>%
 
 winner_table
 ```
+
+# 2-a
+# answer:128
+```{r}
+library(tidyverse)
+matches <- read_csv("https://raw.githubusercontent.com/JeffSackmann/tennis_atp/refs/heads/master/atp_matches_2019.csv")
+
+tournament_count<-matches%>%
+  distinct(tourney_id,tourney_name,tourney_date)%>%
+  nrow()
+
+tournament_count
+```
+# 2-b
+
+```{r}
+
+```
+
+# 2-b
+# The number of players won more than one tournament:155
+# The number of tournaments the most winning player win:21
+```{r}
+tourney_winners <- matches %>%
+                    distinct(tourney_id,winner_name)
+
+player_titles<-tourney_winners%>%
+                  count(winner_name,name="num_titles")%>%
+                  arrange(desc(num_titles))
+
+num_multi_winners <- player_titles%>%
+                      filter(num_titles>1)%>%
+                      nrow()
+
+max_titles<-max(player_titles$num_titles)
+
+num_multi_winners
+max_titles
+```
+
+
+```{r}
 
 ## Quarto
 
